@@ -1,0 +1,291 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: #161616;
+  color: #fff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+.bet {
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+}
+.bet > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 10px;
+}
+.bet > div > button {
+  background-color: #363636;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 7px;
+}
+.bigbet {
+  margin: 10px;
+  border: 2px solid #363636;
+  max-width: 600px;
+  padding: 0 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.closed {
+  border: 2px solid #ff6961;
+}
+.bigbet > p {
+  border-bottom: 1px solid greenyellow;
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+}
+.betwrap {
+  display: flex;
+  flex-direction: column;
+}
+.bet > * {
+  margin: 5px;
+}
+.bet > div > p {
+  text-align: center;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  min-height: 97vh;
+}
+.login-form > input {
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #363636;
+  color: #fff;
+}
+.login-form > button[type="submit"] {
+  background-color: #363636;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  color: greenyellow;
+  font-weight: bold;
+}
+button {
+  background-color: #363636;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  color: greenyellow;
+  font-weight: bold;
+}
+button:disabled {
+  cursor: not-allowed;
+  background-color: #666666 !important;
+}
+button {
+  cursor: pointer;
+}
+
+.kupon {
+  background-color: #363636;
+  width: fit-content;
+  padding: 10px 30px;
+  margin: 10px 0;
+  border-radius: 7px;
+}
+.zakladopcja {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.zakladopcja > * {
+  margin: 5px 5px;
+}
+
+.adminwrap {
+  padding: 10px;
+}
+.wygrana {
+  background-color: greenyellow;
+  color: black;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  font-weight: bold;
+}
+.anuluj {
+  background-color: #ff6961;
+  color: white;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  font-weight: bold;
+}
+.gigawrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.zakladywrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 5px;
+}
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.leaderboard > div {
+  display: flex;
+  flex-direction: row;
+}
+.leaderboard > div > * {
+  margin: 5px;
+}
+.wrapx {
+  padding: 2rem;
+}
+.singleKupon {
+  background-color: #363636;
+  max-width: 400px;
+  padding: 7px;
+  margin: 15px 0;
+  border-radius: 7px;
+  border-top: 2px solid greenyellow;
+}
+/* The slider itself */
+.slider {
+  width: 40%;
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #363636; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+  transition: opacity 0.2s;
+  border-radius: 5px;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: greenyellow; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border-radius: 100%;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: greenyellow; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+.donateform {
+  display: flex;
+  flex-direction: column;
+  min-height: 92vh;
+  justify-content: center;
+  align-items: center;
+}
+.page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.page-container > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.footer > * {
+  margin: 0 5px;
+  font-weight: bold;
+  color: #696969;
+}
+.footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #262626;
+  height: 5vh;
+}
+.checkboxdiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.mainwrap {
+  min-height: 95vh;
+  padding: 10px;
+}
+
+h3 {
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (max-width: 600px) {
+  .gigawrap {
+    justify-content: center;
+  }
+  .bigbet {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* padding: 0 0; */
+    margin: 5px 0;
+  }
+  .bet {
+    margin: 0;
+  }
+}
