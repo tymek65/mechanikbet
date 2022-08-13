@@ -1,39 +1,27 @@
-import Cookies from 'universal-cookie';
-import axios from 'axios';
-import { useQuery } from 'react-query';
 import { Text, Box, Badge } from '@chakra-ui/react';
+import { getCouponValues } from '../utils/coupons';
 const SingleKupon = ({ kupon }) => {
-  const cookies = new Cookies();
-  async function fetchZakladfromKupon() {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/zakladies?id=${kupon.zaklady.id}`, {
-      headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
-      },
-    });
-    return data;
-  }
-  const { isLoading, data } = useQuery(`singleZaklad${kupon.id}`, fetchZakladfromKupon);
-  if (isLoading) return <Text>Loading...</Text>;
+  const { wygrany, wartosc, kurs, opcja, zaklady } = kupon;
+  const { text, color, variant } = getCouponValues(wygrany, wartosc, kurs);
   return (
-    <Box my="2" p="2" bgColor="whiteAlpha.200" borderColor="grey" borderWidth="2px" borderRadius="lg" maxWidth="300px" className="singleKupon" key={kupon.id}>
+    <Box my="2" p="2" bgColor="whiteAlpha.200" borderColor="grey" borderWidth="2px" borderRadius="lg" maxWidth="300px" className="singleKupon">
       <Text>
-        Zakład - <b>{data[0].tekst}</b>
+        <b>{zaklady.tekst}</b>
       </Text>
       <Text>
-        Twój typ - <b>{kupon.opcja === 1 ? data[0].opcja1 : data[0].opcja2}</b>
+        Kurs - <b>{kurs}</b>
       </Text>
       <Text>
-        Kurs - <b>{kupon.kurs}</b>
+        Twój typ - <b>{opcja === 1 ? zaklady.opcja1 : zaklady.opcja2}</b>
       </Text>
       <Text>
-        Wartość - <b>{kupon.wartosc}</b>
+        Wartość - <b>{wartosc}</b>
       </Text>
       <Text>
-        Potencjalna wygrana -<b> {Math.round(kupon.wartosc * kupon.kurs * 100) / 100}</b>
+        Potencjalna wygrana -<b> {Math.round(wartosc * kurs * 100) / 100}</b>
       </Text>
-
-      <Badge colorScheme={data[0].active === true ? 'gray' : kupon.wygrany === true ? 'green' : 'red'} variant={data[0].active === true ? 'outline' : 'solid'}>
-        {data[0].active === true ? 'Kupon w grze' : kupon.wygrany === true ? 'Wygrany' + ` +${kupon.wartosc * kupon.kurs}` : 'Przegrany' + ` -${kupon.wartosc}`}
+      <Badge colorScheme={color} variant={variant}>
+        {text}
       </Badge>
     </Box>
   );

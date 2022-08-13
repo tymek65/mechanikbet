@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../utils/theme';
 import { Box } from '@chakra-ui/react';
-
+import NavBar from '../components/NavBar';
 function MyApp({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
@@ -12,6 +12,7 @@ function MyApp({ Component, pageProps }) {
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
         <Box m="2" minHeight="92vh" className="wrap">
+          <NavBar />
           <Component {...pageProps} />
         </Box>
         <Footer />

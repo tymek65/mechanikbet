@@ -5,7 +5,7 @@ import { Button, Text, Flex, Box, Heading, useToast, Spinner } from '@chakra-ui/
 import ChakraPrompt from './ChakraPrompt';
 import socket from '../client/Socket';
 
-const SingleBet = ({ item, setPunkty }) => {
+const SingleBet = ({ item, setPoints }) => {
   const toast = useToast();
   const cookies = new Cookies();
   const [option1, setOption1] = useState(null);
@@ -51,7 +51,7 @@ const SingleBet = ({ item, setPunkty }) => {
         }
       });
       socket.on('points', (data) => {
-        setPunkty(data);
+        setPoints(data);
       });
       socket.on('notenoughpoints', (data) => {
         toast({

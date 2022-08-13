@@ -5,6 +5,7 @@ import SingleKupon from '../components/SingleKupon';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Button, Heading, Checkbox, Box, Center, Spinner, Flex } from '@chakra-ui/react';
+
 const Kupony = () => {
   const [data, setData] = useState(null);
   const [old, setOld] = useState(null);
@@ -18,8 +19,8 @@ const Kupony = () => {
         },
       })
       .then((res) => {
-        setData(res.data.kuponies.filter((kupon) => kupon.active === true));
-        setOld(res.data.kuponies.filter((kupon) => kupon.active === false));
+        setData(res.data.kuponies.filter((kupon) => kupon.active));
+        setOld(res.data.kuponies.filter((kupon) => !kupon.active));
       })
       .catch((err) => {
         console.log(err);
@@ -57,9 +58,6 @@ const Kupony = () => {
       </Head>
       <Flex flexDirection={['column', 'row']}>
         <Box>
-          <Link href="/">
-            <Button variant="outline">Strona główna</Button>
-          </Link>
           <Heading my="3" size="md">
             Kupony
           </Heading>
@@ -69,11 +67,14 @@ const Kupony = () => {
             </Checkbox>
           </Box>
 
-          {data.map((kupon) => (
-            <SingleKupon key={kupon.id} kupon={kupon} />
-          ))}
+          {data.map((kupon) => {
+            return <SingleKupon key={kupon.id} kupon={kupon} />;
+          })}
 
-          {checkbox === true && old.map((kupon) => <SingleKupon key={kupon.id} kupon={kupon} />)}
+          {checkbox === true &&
+            old.map((kupon) => {
+              return <SingleKupon key={kupon.id} kupon={kupon} />;
+            })}
         </Box>
       </Flex>
     </>

@@ -21,7 +21,6 @@ const Result = () => {
   }, [router.isReady]);
   useEffect(() => {
     if (data?.payment_intent.status === 'succeeded') {
-      console.log('siema');
       socket.emit('payment', data.id, data.payment_intent.amount, cookies.get('id'));
     }
   }, [data]);

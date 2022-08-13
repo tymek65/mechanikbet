@@ -40,9 +40,7 @@ const Leaderboard = () => {
       <Head>
         <title>Leaderboard | mechanikBET</title>
       </Head>
-      <Link href="/">
-        <Button variant="outline">Strona główna</Button>
-      </Link>
+
       <Flex justifyContent="center" minH="85vh">
         <Flex px="5" flexDirection="column" justifyContent="center" alignItems="center" className="leaderboard">
           {data.map((user, index) => (
