@@ -1,14 +1,14 @@
 import Cookies from 'universal-cookie';
-import Link from 'next/link';
 import axios from 'axios';
 import SingleKupon from '../components/SingleKupon';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Button, Heading, Checkbox, Box, Center, Spinner, Flex } from '@chakra-ui/react';
+import { Heading, Checkbox, Box, Flex } from '@chakra-ui/react';
+import NoAccess from '../components/NoAccess';
+import LoadingView from '../components/LoadingView';
 
 const Kupony = () => {
   const [data, setData] = useState(null);
-  const [old, setOld] = useState(null);
   const [checkbox, setCheckbox] = useState(false);
   const cookies = new Cookies();
   useEffect(() => {
@@ -19,36 +19,24 @@ const Kupony = () => {
         },
       })
       .then((res) => {
-        setData(res.data.kuponies.filter((kupon) => kupon.active));
-        setOld(res.data.kuponies.filter((kupon) => !kupon.active));
+        setData(res.data.kuponies.sort((a, b) => b.active - a.active));
       })
       .catch((err) => {
         console.log(err);
       });
-    if (localStorage.getItem('checkbox')) {
-      localStorage.getItem('checkbox') === 'true' ? setCheckbox(true) : setCheckbox(false);
-    }
+    const savedCheckbox = Boolean(localStorage.getItem('checkbox'));
+    setCheckbox(savedCheckbox);
   }, []);
+
   const handleCheckbox = (value) => {
     setCheckbox(value);
     localStorage.setItem('checkbox', value);
   };
   if (!cookies.get('token')) {
-    return (
-      <div>
-        <p>Nie masz dostępu do tej strony</p>
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </div>
-    );
+    return <NoAccess />;
   }
-  if (data === null || old === null) {
-    return (
-      <Center minH="92vh">
-        <Spinner size="lg" />
-      </Center>
-    );
+  if (!data) {
+    return <LoadingView />;
   }
 
   return (
@@ -68,13 +56,9 @@ const Kupony = () => {
           </Box>
 
           {data.map((kupon) => {
+            if (!checkbox && !kupon.active) return;
             return <SingleKupon key={kupon.id} kupon={kupon} />;
           })}
-
-          {checkbox === true &&
-            old.map((kupon) => {
-              return <SingleKupon key={kupon.id} kupon={kupon} />;
-            })}
         </Box>
       </Flex>
     </>

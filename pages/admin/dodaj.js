@@ -1,10 +1,11 @@
 import Cookies from 'universal-cookie';
 import { useQuery } from 'react-query';
-import Link from 'next/link';
 import axios from 'axios';
 import { useState } from 'react';
-import { Input, Button, Text, Heading, Center, Box, Flex, useToast } from '@chakra-ui/react';
+import { Input, Button, Heading, Center, Box, useToast } from '@chakra-ui/react';
 import Head from 'next/head';
+import NoAccess from '../../components/NoAccess';
+import LoadingView from '../../components/LoadingView';
 const Dodaj = () => {
   const toast = useToast();
   const [nazwa, setNazwa] = useState('');
@@ -57,29 +58,9 @@ const Dodaj = () => {
     return data;
   }
   const { isLoading, data } = useQuery('profilex', fetchProfile);
-  if (!cookies.get('token')) {
-    return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="95vh">
-        <Text>Nie masz dostępu do tej strony</Text>
-
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </Flex>
-    );
-  }
-
-  if (isLoading) return <Text>Loading...</Text>;
-  if (data.role.name !== 'admin') {
-    return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="95vh">
-        <Text>Nie masz dostępu do tej strony</Text>
-
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </Flex>
-    );
+  if (isLoading) return <LoadingView />;
+  if (!cookies.get('token') || data.role.name !== 'admin') {
+    return <NoAccess />;
   }
   return (
     <>

@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import Zaklad from '../../components/Zaklad';
-import { Button, Center, Flex, Spinner, Text, useToast } from '@chakra-ui/react';
+import { Box, Flex, useToast } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import Head from 'next/head';
 import socket from '../../client/Socket';
+import LoadingView from '../../components/LoadingView';
+import NoAccess from '../../components/NoAccess';
 
 const Admin = () => {
   const toast = useToast();
@@ -59,50 +61,34 @@ const Admin = () => {
     return data;
   }
   const { isLoading: zakladyloading, data: zakladydata } = useQuery('zaklady', fetchZaklady);
-  if (!cookies.get('token')) {
-    return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="95vh">
-        <Text>Nie masz dostępu do tej strony</Text>
 
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </Flex>
-    );
-  }
+  if (isLoading || zakladyloading) return <LoadingView />;
+  if (!cookies.get('token' || data.role.name !== 'admin')) return <NoAccess />;
 
-  if (isLoading)
-    return (
-      <Center minH="92vh">
-        <Spinner size="lg" />
-      </Center>
-    );
-  if (data.role.name !== 'admin') {
-    return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="95vh">
-        <Text>Nie masz dostępu do tej strony</Text>
-
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </Flex>
-    );
-  }
-  if (zakladyloading) return <p>Loading...</p>;
   return (
     <>
       <Head>
         <title>Admin | mechanikBET</title>
       </Head>
-      <Link href="/">
-        <Button mx="2" variant="outline">
-          Strona główna
-        </Button>
-      </Link>
-      <Link href="admin/dodaj">
-        <Button mx="2" variant="outline">
-          Dodaj zakład
-        </Button>
+
+      <Link href="admin/dodaj" passHref>
+        <Box
+          m="15"
+          fontSize={40}
+          fontWeight={'bold'}
+          rounded={'full'}
+          bg={'#9AE6B4'}
+          pos={'absolute'}
+          bottom={0}
+          right={0}
+          width={20}
+          height={20}
+          d={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          +
+        </Box>
       </Link>
 
       <Flex flexDirection={['column', 'row']} flexWrap={['nowrap', 'wrap']} justifyContent="space-evenly">

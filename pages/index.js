@@ -1,14 +1,17 @@
 import Head from 'next/head';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Cookies from 'universal-cookie';
 import { useRouter } from 'next/router';
 import SingleBet from '../components/SingleBet';
-import { Button, Badge, Input, Center, Spinner, Box, Flex, Grid, Avatar, Heading, Text, Image } from '@chakra-ui/react';
+import { Button, Badge, Input, Center, Box, Flex, Grid, Avatar, Heading, Text, Image } from '@chakra-ui/react';
 import SingleKupon from '../components/SingleKupon';
+import LoadingView from '../components/LoadingView';
+import { Context } from '../client/AuthContext';
 
 export default function Home() {
+  const user = useContext(Context);
   const router = useRouter();
   const { isLoading, data } = useQuery('repoData', () => fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/zakladies?active=true`).then((res) => res.json()));
   const cookies = new Cookies();
@@ -78,12 +81,7 @@ export default function Home() {
     setIsLogged(false);
   };
 
-  if (isLoading)
-    return (
-      <Center minH="92vh">
-        <Spinner size="lg" />
-      </Center>
-    );
+  if (isLoading) return <LoadingView />;
   if (!isLogged)
     return (
       <Center minH="92vh" display="flex" flexDirection="column">

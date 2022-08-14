@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-import Link from 'next/link';
-import { Button, Center, Box, Text, Flex, Spinner } from '@chakra-ui/react';
+import NoAccess from '../components/NoAccess';
+import { Center, Text, Flex, Spinner } from '@chakra-ui/react';
 import Head from 'next/head';
 import Historia from '../components/historia';
 const Leaderboard = () => {
@@ -18,15 +18,7 @@ const Leaderboard = () => {
 
   const { isLoading, data } = useQuery('ranking', fetchLeaderboard);
   if (!cookies.get('token')) {
-    return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="95vh">
-        <Text>Nie masz dostępu do tej strony</Text>
-
-        <Link href="/">
-          <Button>Wróć</Button>
-        </Link>
-      </Flex>
-    );
+    return <NoAccess />;
   }
   if (isLoading)
     return (
