@@ -1,29 +1,29 @@
-import Cookies from 'universal-cookie';
 import axios from 'axios';
 import SingleKupon from '../components/SingleKupon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
 import { Heading, Checkbox, Box, Flex } from '@chakra-ui/react';
-import NoAccess from '../components/NoAccess';
 import LoadingView from '../components/LoadingView';
-
+import { Context } from '../client/AuthContext';
+import { useQuery } from 'react-query';
 const Kupony = () => {
-  const [data, setData] = useState(null);
   const [checkbox, setCheckbox] = useState(false);
-  const cookies = new Cookies();
+  const {
+    user: { jwt },
+  } = useContext(Context);
+
+  const { isLoading: isUserBetsLoading, data: userBetsData } = useQuery('userBets', async () => {
+    const {
+      data: { kuponies },
+    } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return kuponies;
+  });
+
   useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${cookies.get('token')}`,
-        },
-      })
-      .then((res) => {
-        setData(res.data.kuponies.sort((a, b) => b.active - a.active));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     const savedCheckbox = Boolean(localStorage.getItem('checkbox'));
     setCheckbox(savedCheckbox);
   }, []);
@@ -32,10 +32,8 @@ const Kupony = () => {
     setCheckbox(value);
     localStorage.setItem('checkbox', value);
   };
-  if (!cookies.get('token')) {
-    return <NoAccess />;
-  }
-  if (!data) {
+
+  if (isUserBetsLoading) {
     return <LoadingView />;
   }
 
@@ -54,11 +52,12 @@ const Kupony = () => {
               Pokazuj zakończone zakłady
             </Checkbox>
           </Box>
-
-          {data.map((kupon) => {
-            if (!checkbox && !kupon.active) return;
-            return <SingleKupon key={kupon.id} kupon={kupon} />;
-          })}
+          {userBetsData
+            .sort((a, b) => b.active - a.active || b.id - a.id)
+            .map((kupon) => {
+              if (!checkbox && !kupon.active) return;
+              return <SingleKupon key={kupon.id} kupon={kupon} />;
+            })}
         </Box>
       </Flex>
     </>

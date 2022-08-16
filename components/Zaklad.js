@@ -1,21 +1,27 @@
 import axios from 'axios';
 import { useQuery } from 'react-query';
-import Cookies from 'universal-cookie';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { Button, Heading, Text, Box, Flex, Badge } from '@chakra-ui/react';
 import BetClosePrompt from './BetClosePrompt';
+import socket from '../client/Socket';
+import { Context } from '../client/AuthContext';
+import SingleKupon from './SingleKupon';
 
-const Zaklad = ({ zaklady, socket }) => {
+const Zaklad = ({ zaklady }) => {
+  const {
+    user: { jwt },
+  } = useContext(Context);
   const [option, setOption] = useState(null);
   const [type, setType] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
-  const cookies = new Cookies();
+  const betOptions = [zaklady.opcja1.toString(), zaklady.opcja2];
+  console.log(zaklady.opcja1);
   async function fetchKupony() {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/kuponies?zaklady.id=${zaklady.id}&active=true`, {
       headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
+        Authorization: `Bearer ${jwt}`,
       },
     });
     return data;
@@ -45,32 +51,28 @@ const Zaklad = ({ zaklady, socket }) => {
         optiontekst={option === 1 ? zaklady.opcja1 : zaklady.opcja2}
         type={type}
       />
-      <Box textAlign="center" maxW={['28em']} className="zakladywrap" key={zaklady.id} p="4">
+      <Box textAlign="center" maxW={['28em']} key={zaklady.id} p="4">
         <Heading isTruncated size="md">
           {zaklady.tekst}
         </Heading>
-        <Flex flexDirection="row" className="zakladopcja" alignItems="center" justifyContent="center" m="2">
-          <Heading size="md">{zaklady.opcja1}</Heading>
-          <Button m="2" colorScheme="green" className="wygrana" size="sm" onClick={() => handleClose('finish', 1)}>
-            Wygrana
-          </Button>
-        </Flex>
-        <Flex flexDirection="row" alignItems="center" justifyContent="center" m="2">
-          <Heading size="md">{zaklady.opcja2}</Heading>
-          <Button m="2" size="sm" colorScheme="green" className="wygrana" onClick={() => handleClose('finish', 2)}>
-            Wygrana
-          </Button>
-        </Flex>
-        <Box flexDirection="column">
+        {betOptions.map((option, index) => (
+          <Flex key={index} flexDirection="row" alignItems="center" justifyContent="center" m="2">
+            <Heading size="md">{option}</Heading>
+            <Button m="2" colorScheme="green" size="sm" onClick={() => handleClose('finish', index + 1)}>
+              Wygrana
+            </Button>
+          </Flex>
+        ))}
+
+        <Box display={'flex'} alignItems={'center'} flexDirection="column">
           <Button m="2" size="sm" colorScheme="red" className="anuluj" onClick={() => handleClose('finish', 'cancel')}>
             Anuluj zakład
           </Button>
-          <br />
+
           {zaklady.betactive == true ? (
             <Button
               size="sm"
               variant="outline"
-              className="close"
               onClick={() => {
                 handleClose('close');
               }}
@@ -84,13 +86,8 @@ const Zaklad = ({ zaklady, socket }) => {
 
         <Flex flexDirection="column" alignItems="center">
           {data.length <= 0 && <Text>Brak kuponów</Text>}
-          {data.map((kupon) => (
-            <Box p="3" m="2" border="2px" borderRadius="lg" borderColor="grey" w="200px" key={kupon.id} className="kupon" bgColor="whiteAlpha.100">
-              <Text>{kupon.user.username}</Text>
-              <Text>Kurs - {kupon.kurs}</Text>
-              <Text>Typ - {kupon.opcja === 1 ? zaklady.opcja1 : zaklady.opcja2}</Text>
-              <Text>Stawka - {kupon.wartosc}</Text>
-            </Box>
+          {data.map((kupon, index) => (
+            <SingleKupon key={index} kupon={kupon} username={kupon.user.username} />
           ))}
         </Flex>
       </Box>

@@ -1,93 +1,60 @@
 import { useState, useEffect, useRef } from 'react';
-import Cookies from 'universal-cookie';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, Text, Flex, Box, Heading, useToast, Spinner } from '@chakra-ui/react';
+import { Button, Text, Flex, Box, Heading, Spinner, Image } from '@chakra-ui/react';
 import ChakraPrompt from './ChakraPrompt';
 import socket from '../client/Socket';
 
-const SingleBet = ({ item, setPoints }) => {
-  const toast = useToast();
-  const cookies = new Cookies();
-  const [option1, setOption1] = useState(null);
-  const [option2, setOption2] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+const SingleBet = ({ item }) => {
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
+  const [options, setOptions] = useState([
+    { rate: null, name: item.opcja1 },
+    { rate: null, name: item.opcja2 },
+  ]);
+  const [isOpen, setIsOpen] = useState(false);
   const [chosenOption, setChosenOption] = useState({
     numer: null,
     opcja: null,
   });
+
   const handlebetx = (numer, opcja) => {
-    if (option1 !== null && option2 !== null) {
-      setChosenOption({ numer: numer, opcja: opcja });
-      setIsOpen(true);
-    }
+    setChosenOption({ numer: numer, opcja: opcja });
+    setIsOpen(true);
   };
 
   useEffect(() => {
-    if (socket) {
-      socket.on('users', (data) => {
-        setUsers(data);
-      });
-      socket.on('rate', (data) => {
-        if (data.bet === item.id) {
-          setOption1(data.rate1);
-          setOption2(data.rate2);
-        }
-      });
-      socket.on('betsuccessful', (data) => {
-        toast({
-          title: 'Kupon przyjęty!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-      socket.on('betplaceed', (data) => {
-        if (data === item.id) {
-          setOption1(null);
-          setOption2(null);
-          socket.emit('request rate', item.id);
-        }
-      });
-      socket.on('points', (data) => {
-        setPoints(data);
-      });
-      socket.on('notenoughpoints', (data) => {
-        toast({
-          title: 'Nie masz wystarczająco punktów',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-      socket.on('betnotactive', (data) => {
-        toast({
-          title: 'Przyjmowanie zakładów nie jest aktywne',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-      socket.emit('request rate', item.id);
-    }
+    socket.on('rate', ({ bet: betID, rate1, rate2 }) => {
+      if (betID === item.id) {
+        const rates = [rate1, rate2];
+        setOptions((prev) => prev.map((option, index) => ({ ...option, rate: rates[index] })));
+      }
+    });
+    socket.on('betplaceed', (data) => {
+      if (data === item.id) {
+        setOptions((prev) => prev.map((option) => ({ ...option, rate: null })));
+        socket.emit('request rate', item.id);
+      }
+    });
+    socket.emit('request rate', item.id);
+
     return () => {
-      socket.removeAllListeners();
+      socket.off('rate');
+      socket.off('betplaceed');
     };
-  }, [socket]);
+  }, [item.id]);
 
   return (
     <>
-      <ChakraPrompt isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} id={item.id} chosenOption={chosenOption} option1={option1} option2={option2} socket={socket} />
+      <ChakraPrompt isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} id={item.id} chosenOption={chosenOption} option1={options[0].rate} option2={options[1].rate} socket={socket} />
       <Box borderColor={item.betactive ? 'grey' : 'red.400'} borderWidth="2px" borderRadius="lg" my="2" maxW="600px" h="150px" display="flex">
-        {item.zdjecieurl !== null && (
-          <img
+        {item.zdjecieurl && (
+          <Image
             src={item.zdjecieurl}
-            alt=""
+            alt={item.tekst}
+            h={146}
+            pos={'absolute'}
+            zIndex={-1}
             style={{
-              height: '146px',
-              position: 'absolute',
-              zIndex: '-1',
               maskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0)  )',
               WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1),  rgba(0,0,0,0) )',
             }}
@@ -99,30 +66,14 @@ const SingleBet = ({ item, setPoints }) => {
             {item.tekst}
           </Heading>
           <Flex key={item.id}>
-            <Box mx="2" textAlign="center">
-              <Text> {item.opcja1}</Text>
-              <Button disabled={item.betactive == false || (!cookies.get('token') && true)} onClick={() => handlebetx(1, item.opcja1, item.id)}>
-                {option1 === null ? (
-                  <Spinner size="sm" />
-                ) : Math.round((1.6 + option2 * 0.11 - option1 * 0.08) * 100) / 100 < 1.1 ? (
-                  1.1
-                ) : (
-                  Math.round((1.6 + option2 * 0.11 - option1 * 0.08) * 100) / 100
-                )}
-              </Button>
-            </Box>
-            <Box mx="2" textAlign="center">
-              <Text>{item.opcja2}</Text>
-              <Button disabled={item.betactive == false || (!cookies.get('token') && true)} onClick={() => handlebetx(2, item.opcja2, item.id)}>
-                {option2 === null ? (
-                  <Spinner size="sm" />
-                ) : Math.round((1.6 + option1 * 0.11 - option2 * 0.08) * 100) / 100 < 1.1 ? (
-                  1.1
-                ) : (
-                  Math.round((1.6 + option1 * 0.11 - option2 * 0.08) * 100) / 100
-                )}
-              </Button>
-            </Box>
+            {options.map((option, index) => (
+              <Box key={index} mx="2" textAlign="center">
+                <Text> {option.name}</Text>
+                <Button disabled={!item.betactive} onClick={() => handlebetx(index + 1, option.name)}>
+                  {option.rate ?? <Spinner size="sm" />}
+                </Button>
+              </Box>
+            ))}
           </Flex>
         </Flex>
       </Box>

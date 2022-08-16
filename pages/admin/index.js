@@ -1,69 +1,32 @@
-import Cookies from 'universal-cookie';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import Zaklad from '../../components/Zaklad';
-import { Box, Flex, useToast } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { Box, Flex } from '@chakra-ui/react';
 import Head from 'next/head';
 import socket from '../../client/Socket';
 import LoadingView from '../../components/LoadingView';
 import NoAccess from '../../components/NoAccess';
+import { Context } from '../../client/AuthContext';
+import { useContext } from 'react';
 
 const Admin = () => {
-  const toast = useToast();
-  useEffect(() => {
-    if (socket) {
-      socket.on('closegit', (data) => {
-        toast({
-          title: 'Zamknięto zakład!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-      socket.on('betresolved', (data) => {
-        toast({
-          title: 'Zakład został zamknięty i rozliczony!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-      socket.on('betnotactive', (data) => {
-        toast({
-          title: 'Zakład został już rozliczony',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-    }
-  }, [socket]);
-  const cookies = new Cookies();
+  const {
+    user: { jwt, isAdmin },
+  } = useContext(Context);
 
-  async function fetchProfile() {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
-      },
-    });
-    return data;
-  }
-  const { isLoading, data } = useQuery('profile', fetchProfile);
-
-  async function fetchZaklady() {
+  const fetchZaklady = async () => {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/zakladies?active=true`, {
       headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
+        Authorization: `Bearer ${jwt}`,
       },
     });
     return data;
-  }
-  const { isLoading: zakladyloading, data: zakladydata } = useQuery('zaklady', fetchZaklady);
+  };
+  const { isLoading: zakladyloading, data: zakladydata } = useQuery('activeBets', fetchZaklady);
 
-  if (isLoading || zakladyloading) return <LoadingView />;
-  if (!cookies.get('token' || data.role.name !== 'admin')) return <NoAccess />;
+  if (!isAdmin) return <NoAccess />;
+  if (zakladyloading) return <LoadingView />;
 
   return (
     <>

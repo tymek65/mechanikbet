@@ -8,3 +8,6 @@ export const getCouponValues = (couponStatus, value, odds) => {
       return { text: 'Kupon w grze', color: 'gray', variant: 'outline' };
   }
 };
+export const getEstimatedWin = (value, odds) => {
+  return Math.round(value * odds * 100) / 100;
+};

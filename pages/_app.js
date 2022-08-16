@@ -5,7 +5,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../utils/theme';
 import { Box } from '@chakra-ui/react';
 import NavBar from '../components/NavBar';
-import { Context, AuthContext } from '../client/AuthContext';
+import { AuthContext } from '../client/AuthContext';
+import SocketHandler from '../client/SocketHandler';
 function MyApp({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
@@ -13,10 +14,12 @@ function MyApp({ Component, pageProps }) {
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
         <AuthContext>
-          <Box m="2" minHeight="92vh" className="wrap">
-            <NavBar />
-            <Component {...pageProps} />
-          </Box>
+          <SocketHandler>
+            <Box m="2" minHeight="92vh" className="wrap">
+              <NavBar />
+              <Component {...pageProps} />
+            </Box>
+          </SocketHandler>
         </AuthContext>
         <Footer />
       </ChakraProvider>

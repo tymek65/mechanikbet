@@ -1,18 +1,20 @@
-import Cookies from 'universal-cookie';
-import { useQuery } from 'react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Input, Button, Heading, Center, Box, useToast } from '@chakra-ui/react';
+import { Context } from '../../client/AuthContext';
 import Head from 'next/head';
 import NoAccess from '../../components/NoAccess';
-import LoadingView from '../../components/LoadingView';
+
 const Dodaj = () => {
+  const {
+    user: { jwt, isAdmin },
+  } = useContext(Context);
+
   const toast = useToast();
   const [nazwa, setNazwa] = useState('');
   const [opcja1, setOpcja1] = useState('');
   const [opcja2, setOpcja2] = useState('');
   const [url, setUrl] = useState(null);
-  const cookies = new Cookies();
   const handlesubmit = async (e) => {
     e.preventDefault();
     axios
@@ -26,42 +28,34 @@ const Dodaj = () => {
         },
         {
           headers: {
-            Authorization: 'Bearer ' + cookies.get('token'),
+            Authorization: `Bearer ${jwt}`,
           },
         }
       )
       .then((res) => {
-        if (res.status === 200) {
-          toast({
-            title: 'Dodano zakład!',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
-          setNazwa('');
-          setOpcja1('');
-          setOpcja2('');
-        } else {
+        if (res.status !== 200) {
           toast('Nie udało się dodać zakładu', {
             type: 'error',
             theme: 'dark',
           });
+          return;
         }
+        toast({
+          title: 'Dodano zakład!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setNazwa('');
+        setOpcja1('');
+        setOpcja2('');
       });
   };
-  async function fetchProfile() {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
-      },
-    });
-    return data;
-  }
-  const { isLoading, data } = useQuery('profilex', fetchProfile);
-  if (isLoading) return <LoadingView />;
-  if (!cookies.get('token') || data.role.name !== 'admin') {
+
+  if (!isAdmin) {
     return <NoAccess />;
   }
+
   return (
     <>
       <Head>

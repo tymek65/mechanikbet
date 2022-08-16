@@ -3,13 +3,12 @@ import { Box, Link as ChakraLink } from '@chakra-ui/react';
 const Footer = () => {
   return (
     <Box bgColor="blackAlpha.300" p="4" className="footer">
-      <ChakraLink mx="2">
-        <Link href="pp">Polityka Prywatności</Link>
-      </ChakraLink>
-
-      <ChakraLink mx="2">
-        <Link href="regulamin">Regulamin</Link>
-      </ChakraLink>
+      <Link href="/pp" passHref>
+        <ChakraLink mx={2}>Polityka Prywatności</ChakraLink>
+      </Link>
+      <Link href="/regulamin" passHref>
+        <ChakraLink mx={2}>Regulamin</ChakraLink>
+      </Link>
     </Box>
   );
 };

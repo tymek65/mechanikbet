@@ -12,11 +12,13 @@ import {
   NumberDecrementStepper,
   Button,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import Cookies from 'universal-cookie/es6';
+import { useState, useContext } from 'react';
+import { Context } from '../client/AuthContext';
 
 const ChakraPrompt = ({ isOpen, cancelRef, onClose, id, chosenOption, option1, option2, socket }) => {
-  const cookies = new Cookies();
+  const {
+    user: { username, id: userID },
+  } = useContext(Context);
   const [wartosc, setWartosc] = useState(10);
   const handleBet = () => {
     if (wartosc !== null && wartosc !== '') {
@@ -25,10 +27,10 @@ const ChakraPrompt = ({ isOpen, cancelRef, onClose, id, chosenOption, option1, o
           opcja: chosenOption.numer,
           zaklad: id,
           wartosc: wartosc,
-          username: cookies.get('username'),
-          id: cookies.get('id'),
-          opcja1: Math.round((1.6 + option2 * 0.11 - option1 * 0.08) * 100) / 100,
-          opcja2: Math.round((1.6 + option1 * 0.11 - option2 * 0.08) * 100) / 100,
+          username: username,
+          id: userID,
+          opcja1: option1,
+          opcja2: option2,
         });
       }
     }

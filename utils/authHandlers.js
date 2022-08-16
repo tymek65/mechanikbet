@@ -5,24 +5,36 @@ export const handleLoginWithToken = async (loginToken) => {
     data: {
       id,
       username,
-      role: { name },
+      punkty,
+      role: { name: roleName },
     },
   } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
     headers: {
       Authorization: `Bearer ${loginToken}`,
     },
   });
-  return { id, username, name };
+
+  return { id, username, punkty, roleName, jwt: loginToken };
 };
 
-export const handleLoginWithData = (login, password) => {
+export const handleLoginWithData = async (login, password) => {
   const {
     data: {
-      response: { data: userData },
+      jwt,
+      user: {
+        id,
+        username,
+        punkty,
+        role: { name: roleName },
+      },
     },
-  } = axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`, {
-    identifier: login,
-    password: password,
-  });
-  return userData;
+  } = await axios
+    .post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`, {
+      identifier: login,
+      password: password,
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return { jwt, id, username, punkty, roleName };
 };

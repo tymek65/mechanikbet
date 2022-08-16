@@ -1,55 +1,37 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import Cookies from 'universal-cookie';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
-const Historia = () => {
-  const [usernames, setUsernames] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] = useState([]);
-  const cookies = new Cookies();
-  const colors = ['FF9CEE', 'B28DFF', '6EB5FF', 'E7FFAC', 'FFABAB', 'BFFCC6', '85E3FF', 'AFF8DB', 'F3FFE3', 'ACE7FF', 'D5AAFF', 'C4FAF8', 'AFCBFF', 'FFFFD1'];
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/historiapunktows?_sort=data:ASC`, {
-        headers: {
-          Authorization: `Bearer ${cookies.get('token')}`,
-        },
-      })
-      .then((response1) => {
-        axios
-          .get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users?_sort=punkty:DESC&punkty_gte=0`, {
-            headers: {
-              Authorization: `Bearer ${cookies.get('token')}`,
-            },
-          })
-          .then((response2) => {
-            setLoading(false);
-            for (const data of response1.data) {
-              setChartData((prev) => [...prev, data.uzytkownicy]);
-            }
-            for (const [i, user] of response2.data.entries()) {
-              let x = 0;
-              setUsernames((prev) => [
-                ...prev,
-                {
-                  username: user.username,
-                  show: user.username === cookies.get('username') ? true : false,
-                  color: '#' + colors[i],
-                },
-              ]);
-            }
-          });
-      });
-  }, []);
+import { Context } from '../client/AuthContext';
+import { useQuery } from 'react-query';
+const LeaderboardChart = () => {
+  const [users, setUsers] = useState([]);
+  const {
+    user: { username, jwt },
+  } = useContext(Context);
 
-  if (loading === null) {
-    return <div>Loading</div>;
-  }
+  const colors = ['#FF9CEE', '#B28DFF', '#6EB5FF', '#E7FFAC', '#FFABAB', '#BFFCC6', '#85E3FF', '#AFF8DB', '#F3FFE3', '#ACE7FF', '#D5AAFF', '#C4FAF8', '#AFCBFF', '#FFFFD1', '#FFFFD1'];
+
+  const { isLoading: isChartDataLoading, data: chartData } = useQuery('chartData', async () => {
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/historiapunktows?_sort=data:ASC`);
+    return data.map((x) => x.uzytkownicy);
+  });
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users?_sort=punkty:DESC&punkty_gte=0`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      setUsers(data.map((userData, index) => ({ username: userData.username, show: userData.username === username })));
+    };
+    fetchUsers();
+  }, [jwt, username]);
 
   return (
     <>
-      {chartData.length > 0 && (
+      {!isChartDataLoading && (
         <>
           <Flex display={['none', 'none', 'flex']} flex="1 0 auto" alignItems="center" justifyContent="center" flexDirection="column">
             <ResponsiveContainer width="90%" height="80%">
@@ -73,13 +55,13 @@ const Historia = () => {
                   }}
                 />
 
-                {usernames.map((user, index) => {
-                  return <Line key={index} strokeWidth={2} type="monotone" dataKey={user.username} stroke={user.color} connectNulls hide={user.show ? false : true} />;
+                {users.map((user, index) => {
+                  return <Line key={index} strokeWidth={2} type="monotone" dataKey={user.username} stroke={colors[index]} connectNulls hide={!user.show} />;
                 })}
 
                 <Legend
                   onClick={(e) => {
-                    setUsernames((prev) =>
+                    setUsers((prev) =>
                       prev.map((user) => {
                         if (user.username === e.dataKey) {
                           user.show = !user.show;
@@ -96,7 +78,7 @@ const Historia = () => {
               <Button
                 mx="1"
                 onClick={() => {
-                  setUsernames((prev) =>
+                  setUsers((prev) =>
                     prev.map((user) => {
                       user.show = true;
                       return user;
@@ -109,9 +91,9 @@ const Historia = () => {
               <Button
                 mx="1"
                 onClick={() => {
-                  setUsernames((prev) =>
+                  setUsers((prev) =>
                     prev.map((user) => {
-                      if (user.username !== cookies.get('username')) {
+                      if (user.username !== username) {
                         user.show = false;
                       }
                       return user;
@@ -129,4 +111,4 @@ const Historia = () => {
   );
 };
 
-export default Historia;
+export default LeaderboardChart;

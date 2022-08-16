@@ -1,6 +1,7 @@
 import { AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from '@chakra-ui/react';
+import socket from '../client/Socket';
 
-const ChakraPrompt = ({ isOpen, cancelRef, onClose, id, zaklad, option, socket, optiontekst, type }) => {
+const ChakraPrompt = ({ isOpen, cancelRef, onClose, id, zaklad, option, optiontekst, type }) => {
   const handleClosing = () => {
     if (type === 'finish') {
       if (option !== null) {
