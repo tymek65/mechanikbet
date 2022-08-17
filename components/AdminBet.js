@@ -86,7 +86,7 @@ const AdminBet = ({ bet }) => {
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel>
-              <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} gridGap={3} flexDirection="column" alignItems="center">
+              <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} gridGap={3} justifyItems="center">
                 {data.length <= 0 && <Text>Brak kuponów</Text>}
                 {data.map((kupon, index) => (
                   <GridItem key={index}>

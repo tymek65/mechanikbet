@@ -65,7 +65,7 @@ const Bet = ({ item }) => {
         onCancel={onClose}
         header={'Potwierdzenie kuponu'}
         onConfirm={(value) => handleBetConfirm(value)}
-        text={(value) => `Czy jesteś pewny że chcesz postawić ${value} punktów na "${chosenOption.opcja}"`}
+        text={(value) => (value && value >= 1 ? `Czy jesteś pewny że chcesz postawić ${value} punktów na "${chosenOption.opcja}"` : 'Wartość zakładu nie może być mniejsza niż 1')}
       />
       <Box borderColor={item.betactive ? 'grey' : 'red.400'} borderWidth="2px" borderRadius="lg" my="2" maxW="600px" h="150px" display="flex">
         {item.zdjecieurl && (
