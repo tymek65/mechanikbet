@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { useContext, useRef } from 'react';
-import { Button, Heading, Text, Box, Flex, Badge, useDisclosure } from '@chakra-ui/react';
+import { Button, Heading, Text, Box, Flex, Badge, useDisclosure, Grid, GridItem, Accordion, AccordionButton, AccordionIcon, AccordionPanel, AccordionItem } from '@chakra-ui/react';
 import socket from '../client/Socket';
 import { Context } from '../client/AuthContext';
 import Coupon from './Coupon';
 import { TextPrompt } from './Prompts';
 import { getPromptText } from '../utils/coupons';
 import LoadingView from './LoadingView';
+
 const AdminBet = ({ bet }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -42,7 +43,7 @@ const AdminBet = ({ bet }) => {
 
   if (isLoading) return <LoadingView />;
   return (
-    <>
+    <Box>
       <TextPrompt header={'Aktualizacja zakładu'} isOpen={isOpen} onCancel={onClose} onConfirm={() => handleConfirm()} text={getPromptText(chosenOptions.current, bet.tekst, betOptions)} />
       <Box textAlign="center" maxW={['28em']} key={bet.id} p="4">
         <Heading isTruncated size="md">
@@ -78,14 +79,26 @@ const AdminBet = ({ bet }) => {
           )}
         </Box>
 
-        <Flex flexDirection="column" alignItems="center">
-          {data.length <= 0 && <Text>Brak kuponów</Text>}
-          {data.map((kupon, index) => (
-            <Coupon key={index} couponData={kupon} username={kupon.user.username} />
-          ))}
-        </Flex>
+        <Accordion mt={2} allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex="1">Pokaż kupony postawione na ten zakład</Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} gridGap={3} flexDirection="column" alignItems="center">
+                {data.length <= 0 && <Text>Brak kuponów</Text>}
+                {data.map((kupon, index) => (
+                  <GridItem key={index}>
+                    <Coupon couponData={kupon} username={kupon.user.username} />
+                  </GridItem>
+                ))}
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </Box>
-    </>
+    </Box>
   );
 };
 

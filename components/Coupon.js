@@ -5,7 +5,7 @@ const Coupon = ({ couponData, username }) => {
   const { text, color, variant } = getCouponValues(isWon, value, odds);
   const estimatedWin = getEstimatedWin(value, odds);
   return (
-    <Box my="2" p="2" bgColor="whiteAlpha.200" borderColor="grey" borderWidth="2px" borderRadius="lg" maxWidth="300px">
+    <Box w="100%" h="100%" p="2" bgColor="whiteAlpha.200" borderColor="grey" borderWidth="2px" borderRadius="lg" maxWidth={'250px'}>
       <Text>
         <b>{username ?? betData.tekst}</b>
       </Text>

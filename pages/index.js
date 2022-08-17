@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 import Bet from '../components/Bet';
-import { Button, Badge, Flex, Grid, Avatar, Heading, Text } from '@chakra-ui/react';
+import { Button, Badge, Flex, Grid, Avatar, Heading, Text, Box } from '@chakra-ui/react';
 import Coupon from '../components/Coupon';
 import { Context } from '../client/AuthContext';
 
@@ -59,7 +59,9 @@ export default function Home() {
                 .reverse()
                 .slice(0, 3)
                 .map((bet, index) => (
-                  <Coupon couponData={bet} key={index} />
+                  <Box w="100%" key={index} my={1}>
+                    <Coupon couponData={bet} />
+                  </Box>
                 ))}
             </>
           )}

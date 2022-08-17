@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import AdminBet from '../../components/AdminBet';
-import { Box, Flex } from '@chakra-ui/react';
+import { Flex, IconButton } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 import Head from 'next/head';
 import LoadingView from '../../components/LoadingView';
 import NoAccess from '../../components/NoAccess';
@@ -34,23 +35,7 @@ const Admin = () => {
       </Head>
 
       <Link href="admin/dodaj" passHref>
-        <Box
-          m="15"
-          fontSize={40}
-          fontWeight={'bold'}
-          rounded={'full'}
-          bg={'#9AE6B4'}
-          pos={'absolute'}
-          bottom={0}
-          right={0}
-          width={20}
-          height={20}
-          d={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          +
-        </Box>
+        <IconButton size={'lg'} bg={'green.200'} color={'gray.700'} pos={'fixed'} bottom={10} right={10} _hover={{ color: 'gray.200', bg: 'gray.700' }} icon={<AddIcon />} />
       </Link>
 
       <Flex flexDirection={['column', 'row']} flexWrap={['nowrap', 'wrap']} justifyContent="space-evenly">
