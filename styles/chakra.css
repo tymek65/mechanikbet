@@ -1,63 +1,12 @@
 * {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
-.gigawrap {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+html,
+body,
+#__next {
+  height: 100%;
 }
-.slider {
-  width: 40%;
-  -webkit-appearance: none; /* Override default CSS styles */
-  appearance: none; /* Full-width */
-  height: 25px; /* Specified height */
-  background: #363636; /* Grey background */
-  outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
-  transition: opacity 0.2s;
-  border-radius: 5px;
-}
-
-/* Mouse-over effects */
-.slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
-}
-
-/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
-  background: greenyellow; /* Green background */
-  cursor: pointer; /* Cursor on hover */
-  border-radius: 100%;
-}
-
-.slider::-moz-range-thumb {
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
-  background: greenyellow; /* Green background */
-  cursor: pointer; /* Cursor on hover */
-}
-.donateform {
+#__next {
   display: flex;
   flex-direction: column;
-  min-height: 92vh;
-  justify-content: center;
-  align-items: center;
-}
-.wrap {
-  animation: scalein 0.3s ease-in-out;
-}
-
-/* animation scale in  */
-@keyframes scalein {
-  0% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
-  }
 }

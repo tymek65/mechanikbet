@@ -1,10 +1,9 @@
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import Zaklad from '../../components/Zaklad';
+import AdminBet from '../../components/AdminBet';
 import { Box, Flex } from '@chakra-ui/react';
 import Head from 'next/head';
-import socket from '../../client/Socket';
 import LoadingView from '../../components/LoadingView';
 import NoAccess from '../../components/NoAccess';
 import { Context } from '../../client/AuthContext';
@@ -15,7 +14,7 @@ const Admin = () => {
     user: { jwt, isAdmin },
   } = useContext(Context);
 
-  const fetchZaklady = async () => {
+  const fetchBets = async () => {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/zakladies?active=true`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -23,10 +22,10 @@ const Admin = () => {
     });
     return data;
   };
-  const { isLoading: zakladyloading, data: zakladydata } = useQuery('activeBets', fetchZaklady);
+  const { isLoading: betsLoading, data: betsData } = useQuery('activeBets', fetchBets);
 
   if (!isAdmin) return <NoAccess />;
-  if (zakladyloading) return <LoadingView />;
+  if (betsLoading) return <LoadingView />;
 
   return (
     <>
@@ -55,9 +54,9 @@ const Admin = () => {
       </Link>
 
       <Flex flexDirection={['column', 'row']} flexWrap={['nowrap', 'wrap']} justifyContent="space-evenly">
-        {zakladydata.length <= 0 && <h4>Brak aktywnych zakładów</h4>}
-        {zakladydata.map((zaklad) => (
-          <Zaklad socket={socket} key={zaklad.id} zaklady={zaklad} />
+        {betsData.length <= 0 && <h4>Brak aktywnych zakładów</h4>}
+        {betsData.map((bet) => (
+          <AdminBet key={bet.id} bet={bet} />
         ))}
       </Flex>
     </>

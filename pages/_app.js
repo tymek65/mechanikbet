@@ -15,13 +15,13 @@ function MyApp({ Component, pageProps }) {
       <ChakraProvider theme={theme}>
         <AuthContext>
           <SocketHandler>
-            <Box m="2" minHeight="92vh" className="wrap">
+            <Box m="2" flex={'1 0 auto'}>
               <NavBar />
               <Component {...pageProps} />
             </Box>
+            <Footer />
           </SocketHandler>
         </AuthContext>
-        <Footer />
       </ChakraProvider>
     </QueryClientProvider>
   );

@@ -21,7 +21,7 @@ const Ranking = () => {
   const { isLoading, data } = useQuery('ranking', fetchLeaderboard);
   if (isLoading) return <LoadingView />;
   return (
-    <Flex px="5" flexDirection="column" justifyContent="center" alignItems="center" className="leaderboard">
+    <Flex px="5" flexDirection="column" justifyContent="center" alignItems="center">
       {data.map((user, index) => (
         <Flex bgColor={index % 2 === 0 && 'whiteAlpha.100'} p="1" textAlign="center" key={user.id} width="100%" justifyContent="center">
           <Text mr="1" wordBreak="keep-all">

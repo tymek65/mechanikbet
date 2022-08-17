@@ -32,7 +32,7 @@ const Result = () => {
       <Head>
         <title>Płatność | mechanikBET</title>
       </Head>
-      <div className="page-container">
+      <div>
         {data.payment_intent.status === 'succeeded' ? (
           <div>
             <h3>Dziękujemy za wsparcie :)</h3>

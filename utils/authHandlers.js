@@ -8,11 +8,15 @@ export const handleLoginWithToken = async (loginToken) => {
       punkty,
       role: { name: roleName },
     },
-  } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
-    headers: {
-      Authorization: `Bearer ${loginToken}`,
-    },
-  });
+  } = await axios
+    .get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    })
+    .catch((err) => {
+      throw err.response.data.message[0].messages[0].message;
+    });
 
   return { id, username, punkty, roleName, jwt: loginToken };
 };
@@ -34,7 +38,7 @@ export const handleLoginWithData = async (login, password) => {
       password: password,
     })
     .catch((err) => {
-      console.log(err);
+      throw err.response.data.message[0].messages[0].message;
     });
   return { jwt, id, username, punkty, roleName };
 };

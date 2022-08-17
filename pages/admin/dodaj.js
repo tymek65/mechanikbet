@@ -11,20 +11,20 @@ const Dodaj = () => {
   } = useContext(Context);
 
   const toast = useToast();
-  const [nazwa, setNazwa] = useState('');
-  const [opcja1, setOpcja1] = useState('');
-  const [opcja2, setOpcja2] = useState('');
-  const [url, setUrl] = useState(null);
+  const [betName, setBetName] = useState('');
+  const [firstOption, setFirstOption] = useState('');
+  const [secondOption, setSecondOption] = useState('');
+  const [imageUrl, setImageUrl] = useState(null);
   const handlesubmit = async (e) => {
     e.preventDefault();
     axios
       .post(
         `${process.env.NEXT_PUBLIC_STRAPI_URL}/zakladies`,
         {
-          tekst: nazwa,
-          opcja1: opcja1,
-          opcja2: opcja2,
-          zdjecieurl: url,
+          tekst: betName,
+          opcja1: firstOption,
+          opcja2: secondOption,
+          zdjecieurl: imageUrl,
         },
         {
           headers: {
@@ -46,9 +46,9 @@ const Dodaj = () => {
           duration: 5000,
           isClosable: true,
         });
-        setNazwa('');
-        setOpcja1('');
-        setOpcja2('');
+        setBetName('');
+        setFirstOption('');
+        setSecondOption('');
       });
   };
 
@@ -64,11 +64,11 @@ const Dodaj = () => {
       <Center minH="92vh">
         <Box>
           <Heading>Dodaj zakład</Heading>
-          <form action="" className="login-form" onSubmit={(e) => handlesubmit(e)}>
-            <Input my="2" onChange={(e) => setNazwa(e.target.value)} value={nazwa} type="text" name="" id="" placeholder="nazwa zakładu" />
-            <Input my="2" onChange={(e) => setOpcja1(e.target.value)} value={opcja1} type="text" name="" id="" placeholder="opcja1" />
-            <Input my="2" onChange={(e) => setOpcja2(e.target.value)} value={opcja2} type="text" name="" id="" placeholder="opcja2" />
-            <Input my="2" onChange={(e) => setUrl(e.target.value)} value={url} type="text" name="" id="" placeholder="url do zdjecia" />
+          <form action="" onSubmit={(e) => handlesubmit(e)}>
+            <Input my="2" onChange={(e) => setBetName(e.target.value)} value={betName} type="text" placeholder="nazwa zakładu" />
+            <Input my="2" onChange={(e) => setFirstOption(e.target.value)} value={firstOption} type="text" placeholder="opcja1" />
+            <Input my="2" onChange={(e) => setSecondOption(e.target.value)} value={secondOption} type="text" placeholder="opcja2" />
+            <Input my="2" onChange={(e) => setImageUrl(e.target.value)} value={imageUrl} type="text" placeholder="url do zdjecia" />
             <Button colorScheme="green" type="submit">
               Dodaj
             </Button>

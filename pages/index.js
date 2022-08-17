@@ -2,9 +2,9 @@ import Head from 'next/head';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useContext } from 'react';
-import SingleBet from '../components/SingleBet';
+import Bet from '../components/Bet';
 import { Button, Badge, Flex, Grid, Avatar, Heading, Text } from '@chakra-ui/react';
-import SingleKupon from '../components/SingleKupon';
+import Coupon from '../components/Coupon';
 import { Context } from '../client/AuthContext';
 
 export default function Home() {
@@ -40,7 +40,7 @@ export default function Home() {
       <Grid display={['block', 'block', 'grid']} templateColumns={['', '', '1fr auto 1fr']} columnGap={4} templateAreas="'left center right'">
         <Flex gridArea="center" flexDirection="column" alignItems="center">
           {!isLoading && data.length <= 0 && <h4>Brak aktywnych zakładów</h4>}
-          {!isLoading && data.map((item) => <SingleBet key={item.id} item={item} />)}
+          {!isLoading && data.map((item) => <Bet key={item.id} item={item} />)}
         </Flex>
         <Flex display={['none', 'none', 'flex']} gridArea="right" direction="column" alignItems={'flex-start'}>
           <Flex alignItems="center" mb={1}>
@@ -59,11 +59,11 @@ export default function Home() {
                 .reverse()
                 .slice(0, 3)
                 .map((bet, index) => (
-                  <SingleKupon kupon={bet} key={index} />
+                  <Coupon couponData={bet} key={index} />
                 ))}
             </>
           )}
-          
+
           <Button mt={1} onClick={() => handleLogout()}>
             Wyloguj
           </Button>

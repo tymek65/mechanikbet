@@ -1,12 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, Text, Flex, Box, Heading, Spinner, Image } from '@chakra-ui/react';
-import ChakraPrompt from './ChakraPrompt';
 import socket from '../client/Socket';
+import { NumberPrompt } from './Prompts';
+import { Context } from '../client/AuthContext';
 
-const SingleBet = ({ item }) => {
+const Bet = ({ item }) => {
+  const {
+    user: { id: userID, username },
+  } = useContext(Context);
   const onClose = () => setIsOpen(false);
-  const cancelRef = useRef();
   const [options, setOptions] = useState([
     { rate: null, name: item.opcja1 },
     { rate: null, name: item.opcja2 },
@@ -20,6 +23,18 @@ const SingleBet = ({ item }) => {
   const handlebetx = (numer, opcja) => {
     setChosenOption({ numer: numer, opcja: opcja });
     setIsOpen(true);
+  };
+
+  const handleBetConfirm = (value) => {
+    socket.emit('bet', {
+      opcja: chosenOption.numer,
+      zaklad: item.id,
+      wartosc: value,
+      username: username,
+      id: userID,
+      opcja1: options[0].rate,
+      opcja2: options[1].rate,
+    });
   };
 
   useEffect(() => {
@@ -45,7 +60,13 @@ const SingleBet = ({ item }) => {
 
   return (
     <>
-      <ChakraPrompt isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} id={item.id} chosenOption={chosenOption} option1={options[0].rate} option2={options[1].rate} socket={socket} />
+      <NumberPrompt
+        isOpen={isOpen}
+        onCancel={onClose}
+        header={'Potwierdzenie kuponu'}
+        onConfirm={(value) => handleBetConfirm(value)}
+        text={(value) => `Czy jesteś pewny że chcesz postawić ${value} punktów na "${chosenOption.opcja}"`}
+      />
       <Box borderColor={item.betactive ? 'grey' : 'red.400'} borderWidth="2px" borderRadius="lg" my="2" maxW="600px" h="150px" display="flex">
         {item.zdjecieurl && (
           <Image
@@ -81,4 +102,4 @@ const SingleBet = ({ item }) => {
   );
 };
 
-export default SingleBet;
+export default Bet;

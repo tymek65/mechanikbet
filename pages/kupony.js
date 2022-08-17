@@ -1,5 +1,5 @@
 import axios from 'axios';
-import SingleKupon from '../components/SingleKupon';
+import Coupon from '../components/Coupon';
 import { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
 import { Heading, Checkbox, Box, Flex } from '@chakra-ui/react';
@@ -56,7 +56,7 @@ const Kupony = () => {
             .sort((a, b) => b.active - a.active || b.id - a.id)
             .map((kupon) => {
               if (!checkbox && !kupon.active) return;
-              return <SingleKupon key={kupon.id} kupon={kupon} />;
+              return <Coupon key={kupon.id} couponData={kupon} />;
             })}
         </Box>
       </Flex>
